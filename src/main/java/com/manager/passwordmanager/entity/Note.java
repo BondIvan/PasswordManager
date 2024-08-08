@@ -17,11 +17,14 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "service")
+    @Column(name = "service_name")
     private String serviceName;
 
     @Column(name = "service_url")
     private String url;
+
+    @Column(name = "service_login")
+    private String login;
 
     @Column(name = "hash_password")
     private String password;
