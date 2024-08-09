@@ -35,8 +35,6 @@ public class MPController {
     @GetMapping
     public String showPageWithMasterPasswordField() {
 
-        System.out.println("field with master password");
-
         if(!mpService.mpExists())
             return "redirect:/master-password/create";
 
@@ -45,8 +43,6 @@ public class MPController {
 
     @PostMapping
     public String checkMasterPassword(@RequestParam("secret") String secret, HttpSession session) {
-
-        System.out.println("start check master password...");
 
         if(mpService.checkMP(secret)) {
             session.setAttribute("authenticated", true);
