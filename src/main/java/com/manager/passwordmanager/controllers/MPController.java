@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/master-password")
@@ -42,16 +43,16 @@ public class MPController {
     }
 
     @PostMapping
-    public String checkMasterPassword(@RequestParam("secret") String secret, HttpSession session) {
+    public String checkMasterPassword(@RequestParam("secret") String secret, HttpSession session, RedirectAttributes redirectAttributes) {
 
-        if(mpService.checkMP(secret)) {
-            session.setAttribute("authenticated", true);
-            return "redirect:/";
-        } else {
-            System.out.println("master password is wrong: " + secret);
+        if(!mpService.checkMP(secret)) {
+            redirectAttributes.addFlashAttribute("error", "master password is wrong");
             return "redirect:/master-password";
         }
 
+        session.setAttribute("authenticated", true);
+
+        return "redirect:/";
     }
 
 }
