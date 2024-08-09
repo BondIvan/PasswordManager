@@ -31,8 +31,8 @@ public class MPService {
         try {
             return validationMP.checkInputPassword(password);
         } catch (NoSuchPaddingException | IllegalBlockSizeException | IOException | NoSuchAlgorithmException |
-                 InvalidAlgorithmParameterException | InvalidKeyException |
-                 InvalidKeySpecException | BadPaddingException e) {
+                 InvalidAlgorithmParameterException | InvalidKeyException | InvalidKeySpecException |
+                 BadPaddingException e) {
             throw new RuntimeException(e);
         }
 
