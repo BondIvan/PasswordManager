@@ -20,10 +20,10 @@ public class Storage {
 
     private static final String PATH_TO_KEY_STORE = "src/main/resources/files/KeysStorage.ks";
 
-    public KeyStore initializeKeyStore(char[] storePassword) throws KeyStoreException {
-
+    public KeyStore initializeKeyStore(String keyStorePassword) throws KeyStoreException {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
+        char[] storePassword = keyStorePassword.toCharArray();
         try {
             if(Files.exists(Paths.get(PATH_TO_KEY_STORE))) {
                 try (FileInputStream fileInputStream = new FileInputStream(PATH_TO_KEY_STORE)) {
