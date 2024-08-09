@@ -3,6 +3,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+#MP
+/src/main/resources/files/
+
 ### STS ###
 .apt_generated
 .classpath
