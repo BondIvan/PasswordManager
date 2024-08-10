@@ -10,11 +10,15 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
 import java.security.*;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 public class AES {
@@ -37,6 +41,10 @@ public class AES {
     @PostConstruct
     private void init() throws KeyStoreException {
         this.keyStore = storage.initializeKeyStore(keyStorePassword);
+    }
+
+    public void deleteAlias(String alias) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+        storage.deleteKey(keyStore, alias, keyStorePassword.toCharArray());
     }
 
     public String encrypt(String password, String alias) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException, KeyStoreException {
