@@ -30,7 +30,7 @@ public class Storage {
                     keyStore.load(fileInputStream, storePassword);
                 }
             } else {
-                // Если хранилище keyStore ещё не создали, создать его пустым
+                // If the keyStore has not yet been created, create it empty
                 keyStore.load(null, storePassword);
                 try (FileOutputStream fileOutputStream = new FileOutputStream(PATH_TO_KEY_STORE)) {
                     keyStore.store(fileOutputStream, storePassword);
@@ -40,7 +40,7 @@ public class Storage {
             throw new RuntimeException(e);
         }
         finally {
-            // Очистка чувствиельных данных из памяти
+            // Clearing sensitive data from memory
             Arrays.fill(storePassword, '\0');
         }
 
@@ -58,7 +58,7 @@ public class Storage {
             throw new RuntimeException(e);
         }
         finally {
-            // Очистка чувствиельных данных из памяти
+            // Clearing sensitive data from memory
             Arrays.fill(storePassword, '\0');
             secretKeyEntry = null;
         }
@@ -76,7 +76,7 @@ public class Storage {
 
         SecretKey secretKey = secretKeyEntry.getSecretKey();
 
-        // Очистка чувствиельных данных из памяти
+        // Clearing sensitive data from memory
         Arrays.fill(storePassword, '\0');
         secretKeyEntry = null;
 
@@ -92,7 +92,7 @@ public class Storage {
         try (FileOutputStream fileOutputStream = new FileOutputStream(PATH_TO_KEY_STORE)) {
             keyStore.store(fileOutputStream, storePassword);
         } finally {
-            // Очистка чувствиельных данных из памяти
+            // Clearing sensitive data from memory
             Arrays.fill(storePassword, '\0');
         }
     }

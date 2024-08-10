@@ -27,7 +27,6 @@ public class ValidationMP {
     private static final int GCM_TAG_LENGTH = 128;
     private static final int SALT_LENGTH = 16;
 
-    // Создать мастер-пароль
     public void createMasterPassword(String inputNewPassword) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
 
         char[] newPassword = inputNewPassword.toCharArray();
@@ -38,7 +37,7 @@ public class ValidationMP {
             Files.write(Paths.get(PATH_SALT), salt);
             Files.write(Paths.get(PATH_VALIDATION), validation);
 
-            // Очистка чувствиельных данных из памяти
+            // Clearing sensitive data from memory
             Arrays.fill(newPassword, '\0');
             Arrays.fill(salt, (byte) '\0');
             Arrays.fill(validation, (byte) '\0');
@@ -59,7 +58,7 @@ public class ValidationMP {
 
         boolean result = Arrays.equals(validation, unverified);
 
-        // Очистка чувствиельных данных из памяти
+        // Clearing sensitive data from memory
         Arrays.fill(inputForValidate, '\0');
         Arrays.fill(salt, (byte) '\0');
         Arrays.fill(validation, (byte) '\0');
@@ -82,24 +81,24 @@ public class ValidationMP {
         byte[] key = secretKeyFactory.generateSecret(spec).getEncoded();
         SecretKey keySpec = new SecretKeySpec(key, "AES");
 
-        // Создание IV, нужно для алгоритма AES в режиме работы GCM
+        // Generating IV, required for AES algorithm in GCM mode
         byte[] iv = (IV == null) ? generateIV() : IV;
 
-        // Создание экземплера шифра AES
+        // Creating an AES Cipher Sampler
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmSpec);
 
-        // Шифрование известного значения - "validation";
+        // Encryption of a known value - "validation"
         byte[] encryptedValidation = cipher.doFinal("validation".getBytes(StandardCharsets.UTF_8));
 
-        // Конкатенация IV и зашифрованных данных
+        // Concatenation of IV and encrypted data
         byte[] resultValidation = new byte[iv.length + encryptedValidation.length];
-        System.arraycopy(iv, 0, resultValidation, 0, iv.length); // В пустой массив resultValidation скопировать все байты из iv
-        // Массив (arr1) источник | с какой позиции начать в arr1 | куда скопировать (arr2) | с какой позиции (arr2) начинать вставку | количество элементов, которые нужно вставить
+        System.arraycopy(iv, 0, resultValidation, 0, iv.length); // Copy all bytes from iv to the empty resultValidation array
+        // Array (arr1) source | what position to start in arr1 | where to copy (arr2) | from what position to start (arr2) insertion | number of elements
         System.arraycopy(encryptedValidation, 0, resultValidation, iv.length, encryptedValidation.length);
 
-        // Очистка чувствиельных данных из памяти
+        // Clearing sensitive data from memory
         Arrays.fill(key, (byte) '\0');;
         Arrays.fill(password, '\0');
         spec.clearPassword();

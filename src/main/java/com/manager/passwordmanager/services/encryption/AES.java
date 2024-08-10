@@ -45,15 +45,15 @@ public class AES {
         byte[] iv = generateIV();
         SecretKey key = generateKey(password.toCharArray(), salt);
 
-        // Создание экземплера шифра AES
+        // Creating an AES Cipher Instance
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
 
-        // Конкатенация IV и зашифрованных данных
+        // Concatenation of IV and encrypted data
         byte[] encrypted = cipher.doFinal(password.getBytes());
         byte[] concatenatedIvAndEncrypted = new byte[iv.length + encrypted.length];
-        // Массив (arr1) источник | с какой позиции начать в arr1 | куда скопировать (arr2) | с какой позиции (arr2) начинать вставку | количество элементов, которые нужно вставить
+        // Array (arr1) source | what position to start in arr1 | where to copy (arr2) | from what position to start (arr2) insertion | number of elements
         System.arraycopy(iv, 0, concatenatedIvAndEncrypted, 0, iv.length);
         System.arraycopy(encrypted, 0, concatenatedIvAndEncrypted, iv.length, encrypted.length);
 
@@ -61,7 +61,7 @@ public class AES {
 
         storage.saveKey(keyStore, alias, key, keyStorePassword.toCharArray());
 
-        // Очистка чувствиельных данных из памяти
+        // Clearing sensitive data from memory
         Arrays.fill(iv, (byte) '\0');
         Arrays.fill(salt, (byte) '\0');
         Arrays.fill(encrypted, (byte) '\0');
@@ -84,7 +84,7 @@ public class AES {
         cipher.init(Cipher.DECRYPT_MODE, key, gcmSpec);
         byte[] decrypted = cipher.doFinal(encryptText);
 
-        // Очистка чувствиельных данных из памяти
+        // Clearing sensitive data from memory
         Arrays.fill(fromBase64ToByteView, (byte) '\0');
         Arrays.fill(iv, (byte) '\0');
         Arrays.fill(encryptText, (byte) '\0');
@@ -99,7 +99,7 @@ public class AES {
         KeySpec spec = new PBEKeySpec(password, salt, 65536, AES_KEY_SIZE);
         SecretKey tmp = factory.generateSecret(spec);
 
-        // Указывает алгоритм, для которого предназначен ключ
+        // Specifies the algorithm the key is intended for
         return new SecretKeySpec(tmp.getEncoded(), "AES");
     }
 
