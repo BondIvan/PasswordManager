@@ -5,14 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes</title>
-    <!-- Подключение Bootstrap -->
+    <!-- Connection Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-4">
     <h1 class="text-center mb-3 h3">Notes Management</h1>
 
-    <!-- Форма для добавления новой заметки -->
     <div class="card mb-3">
         <div class="card-header py-2">
             <h2 class="h6 mb-0">Add New Note</h2>
@@ -44,7 +43,6 @@
         </div>
     </div>
 
-    <!-- Список всех заметок -->
     <h2 class="h6 mb-2">All Notes</h2>
     <div class="table-responsive">
         <table class="table table-sm table-striped table-bordered">
@@ -55,6 +53,7 @@
                 <th scope="col">Service URL</th>
                 <th scope="col">Service Login</th>
                 <th scope="col">Password</th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -64,6 +63,11 @@
                 <td th:text="${note.url}"></td>
                 <td th:text="${note.login}"></td>
                 <td th:text="${note.password}"></td>
+                <td>
+                    <form th:action="@{/delete/{id}(id=${note.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>
