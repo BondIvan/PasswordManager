@@ -56,17 +56,18 @@ public class NoteService {
         }
     }
 
+    @Transactional
     public void deleteNoteById(Long id) {
         try {
 
             Note note = getNoteById(id);
-            String alias = note.getServiceName() + ":" + note.getId();
-            System.out.println("Deleting note with id = " + id + " and alias = " + alias);
             noteRepository.deleteById(id);
+
+            String alias = note.getServiceName() + ":" + note.getId();
             aes.deleteAlias(alias);
 
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
 
     }
