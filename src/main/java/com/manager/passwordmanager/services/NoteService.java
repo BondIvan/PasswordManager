@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class NoteService {
         try {
 
             String openPassword = savedNote.getPassword();
-            String alias = note.getServiceName() + ":" + savedNote.hashCode();
+            String alias = note.getServiceName() + ":" + savedNote.getId();
             String encrypt = aes.encrypt(openPassword, alias);
             note.setPassword(encrypt);
 
@@ -52,6 +54,21 @@ public class NoteService {
                  KeyStoreException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void deleteNoteById(Long id) {
+        try {
+
+            Note note = getNoteById(id);
+            String alias = note.getServiceName() + ":" + note.getId();
+            System.out.println("Deleting note with id = " + id + " and alias = " + alias);
+            noteRepository.deleteById(id);
+            aes.deleteAlias(alias);
+
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public Note getNoteByServiceName(String serviceName) {

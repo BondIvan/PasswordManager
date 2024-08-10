@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -30,6 +31,12 @@ public class MainController {
     @PostMapping("/add")
     public String addNode(@ModelAttribute("newNote") Note note) {
         noteService.addNewNote(note);
+        return "redirect:/";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteNote(@PathVariable("id") Long id) {
+        noteService.deleteNoteById(id);
         return "redirect:/";
     }
 
