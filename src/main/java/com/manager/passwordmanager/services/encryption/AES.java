@@ -45,8 +45,6 @@ public class AES {
         byte[] iv = generateIV();
         SecretKey key = generateKey(password.toCharArray(), salt);
 
-        storage.saveKey(keyStore, alias, key, keyStorePassword.toCharArray());
-
         // Создание экземплера шифра AES
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
@@ -60,6 +58,8 @@ public class AES {
         System.arraycopy(encrypted, 0, concatenatedIvAndEncrypted, iv.length, encrypted.length);
 
         String base64View = Base64.getEncoder().encodeToString(concatenatedIvAndEncrypted);
+
+        storage.saveKey(keyStore, alias, key, keyStorePassword.toCharArray());
 
         // Очистка чувствиельных данных из памяти
         Arrays.fill(iv, (byte) '\0');
