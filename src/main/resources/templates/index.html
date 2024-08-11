@@ -22,18 +22,30 @@
                     <div class="col-md-3">
                         <label for="serviceName" class="form-label mb-1 small">Service Name:</label>
                         <input type="text" th:field="*{serviceName}" class="form-control form-control-sm" id="serviceName" placeholder="Service name" />
+                        <span class="validationErrors"
+                              th:if="${#fields.hasErrors('serviceName')}"
+                              th:errors="*{serviceName}">serviceName has errors</span>
                     </div>
                     <div class="col-md-3">
                         <label for="url" class="form-label mb-1 small">Service URL:</label>
                         <input type="text" th:field="*{url}" class="form-control form-control-sm" id="url" placeholder="Service URL" />
+                        <span class="validationErrors"
+                              th:if="${#fields.hasErrors('url')}"
+                              th:errors="*{url}">url has errors</span>
                     </div>
                     <div class="col-md-3">
                         <label for="login" class="form-label mb-1 small">Service Login:</label>
                         <input type="text" th:field="*{login}" class="form-control form-control-sm" id="login" placeholder="Service login" />
+                        <span class="validationErrors"
+                              th:if="${#fields.hasErrors('login')}"
+                              th:errors="*{login}">login has errors</span>
                     </div>
                     <div class="col-md-3">
                         <label for="password" class="form-label mb-1 small">Password:</label>
                         <input type="text" th:field="*{password}" class="form-control form-control-sm" id="password" placeholder="Password" />
+                        <span class="validationErrors"
+                              th:if="${#fields.hasErrors('password')}"
+                              th:errors="*{password}">password has errors</span>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end">
