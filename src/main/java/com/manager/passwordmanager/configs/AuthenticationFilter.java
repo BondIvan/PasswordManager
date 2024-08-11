@@ -20,7 +20,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         HttpSession session = request.getSession(false);
         String requestURI = request.getRequestURI();
 
-        if("/notes".equals(requestURI) && (session == null || session.getAttribute("authenticated") == null)) {
+        if(requestURI.contains("/notes") && (session == null || session.getAttribute("authenticated") == null)) {
             response.sendRedirect("/master-password");
             return;
         }

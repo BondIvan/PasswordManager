@@ -9,7 +9,6 @@ import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.security.auth.DestroyFailedException;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -17,8 +16,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
 
 @Component
 public class AES {
@@ -79,7 +76,7 @@ public class AES {
         return base64View;
     }
 
-    public String decrypt(String encrypted, String alias) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, DestroyFailedException, KeyStoreException {
+    public String decrypt(String encrypted, String alias) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, KeyStoreException {
 
         SecretKey key = storage.loadKey(keyStore, alias, keyStorePassword.toCharArray());
 
