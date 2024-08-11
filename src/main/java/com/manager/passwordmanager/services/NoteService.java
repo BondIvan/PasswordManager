@@ -39,6 +39,17 @@ public class NoteService {
                 .orElseThrow(() -> new NotFoundException("Note with id = " + id + " not found"));
     }
 
+    public String decryptPassword(Note note) {
+        try {
+            String alias = note.getServiceName() + ":" + note.getId();
+            String password = note.getPassword();
+            return aes.decrypt(password, alias);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException |
+                 BadPaddingException | InvalidAlgorithmParameterException | KeyStoreException e) {
+            throw new RuntimeException("Error decrypting password", e);
+        }
+    }
+
     @Transactional
     public void addNewNote(Note note) {
         Note savedNote = noteRepository.save(note);

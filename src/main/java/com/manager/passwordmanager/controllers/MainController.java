@@ -6,7 +6,11 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -24,11 +28,15 @@ public class MainController {
     @GetMapping
     public String getAllNotes(Model model) {
         List<Note> notes = noteService.getAllNote();
+        notes.forEach(note -> note.setPassword(noteService.decryptPassword(note)));
+
         model.addAttribute("notes", notes);
 
+        // if bindingResult has any error, model already has 'newNote' attribute
         if (!model.containsAttribute("newNote")) {
             model.addAttribute("newNote", new Note());
         }
+
         return "index";
     }
 
