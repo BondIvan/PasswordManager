@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -42,6 +43,7 @@ public class Note {
 
     @Column(name = "hash_password")
     @Password
+    @NotNull
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
