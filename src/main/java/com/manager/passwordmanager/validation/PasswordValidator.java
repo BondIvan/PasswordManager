@@ -13,14 +13,37 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
 
-        if(s.length() < 8)
-            return false;
-
         String regexUpperCase = ".*\\p{Lu}.*"; // Any language
         String regexLowerCase = ".*\\p{Ll}.*"; // Any language
         String regexSpecialSymbol = ".*[!@#$%^&*()_+\\-=\\[\\]{};:\"\\\\|,.<>/?].*";
         String regexNumber = ".*\\d.*";
 
-        return s.matches(regexUpperCase) && s.matches(regexLowerCase) && s.matches(regexSpecialSymbol) && s.matches(regexNumber);
+        boolean isValid = true;
+
+        if(!s.matches(regexUpperCase)) {
+            isValid = false;
+            constraintValidatorContext.buildConstraintViolationWithTemplate("Password should contain upper case characters.").addConstraintViolation();
+        }
+
+        if(!s.matches(regexLowerCase)) {
+            isValid = false;
+            constraintValidatorContext.buildConstraintViolationWithTemplate("Password should contain lower case characters.").addConstraintViolation();
+        }
+
+        if(!s.matches(regexSpecialSymbol)) {
+            isValid = false;
+            constraintValidatorContext.buildConstraintViolationWithTemplate("Password should contain special symbols.").addConstraintViolation();
+        }
+
+        if(!s.matches(regexNumber)) {
+            isValid = false;
+            constraintValidatorContext.buildConstraintViolationWithTemplate("Password should contain digits.").addConstraintViolation();
+        }
+
+        if(!isValid) {
+            constraintValidatorContext.disableDefaultConstraintViolation();
+        }
+
+        return isValid;
     }
 }
