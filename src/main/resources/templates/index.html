@@ -17,7 +17,7 @@
             <h2 class="h6 mb-0">Add New Note</h2>
         </div>
         <div class="card-body py-3">
-            <form th:action="@{/add}" th:object="${newNote}" method="post">
+            <form th:action="@{/notes/add}" th:object="${newNote}" method="post">
                 <div class="row g-2 mb-2">
                     <div class="col-md-3">
                         <label for="serviceName" class="form-label mb-1 small">Service Name:</label>
@@ -64,7 +64,7 @@
                 <td th:text="${note.login}"></td>
                 <td th:text="${note.password}"></td>
                 <td>
-                    <form th:action="@{/delete/{id}(id=${note.id})}" method="post" class="d-inline">
+                    <form th:action="@{notes/delete/{id}(id=${note.id})}" method="post" class="d-inline">
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>

@@ -52,7 +52,7 @@ public class MPController {
 
         session.setAttribute("authenticated", true);
 
-        return "redirect:/";
+        return "redirect:/notes";
     }
 
 }
