@@ -87,12 +87,4 @@ public class NoteService {
 
     }
 
-    public Note getNoteByServiceName(String serviceName) {
-        return null;
-    }
-
-    public void updateNote(Note note) {
-
-    }
-
 }
