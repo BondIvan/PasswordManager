@@ -1,16 +1,13 @@
 package com.manager.passwordmanager.controllers;
 
 import com.manager.passwordmanager.entity.Note;
+import com.manager.passwordmanager.exceptions.DuplicateNoteException;
 import com.manager.passwordmanager.services.NoteService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -38,6 +35,15 @@ public class MainController {
         }
 
         return "index";
+    }
+
+    @ExceptionHandler(DuplicateNoteException.class)
+    public String handleDuplicateNote(DuplicateNoteException duplicateNoteException, RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("duplicateException", duplicateNoteException.getMessage());
+        redirectAttributes.addFlashAttribute("newNote", new Note());
+
+        return "redirect:/notes";
     }
 
     @PostMapping("/add")

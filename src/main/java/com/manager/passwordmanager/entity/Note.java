@@ -1,20 +1,11 @@
 package com.manager.passwordmanager.entity;
 
 import com.manager.passwordmanager.validation.Password;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -22,7 +13,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Table(name = "Note")
+@Table(
+        name = "Note",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "UniqueServiceNameAndLogin",
+                        columnNames = { "service_name", "service_login" }
+                )
+        }
+)
 public class Note {
 
     @Id

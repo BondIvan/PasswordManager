@@ -1,9 +1,11 @@
 package com.manager.passwordmanager.services;
 
 import com.manager.passwordmanager.entity.Note;
+import com.manager.passwordmanager.exceptions.DuplicateNoteException;
 import com.manager.passwordmanager.exceptions.NotFoundException;
 import com.manager.passwordmanager.repositories.NoteRepository;
 import com.manager.passwordmanager.services.encryption.AES;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,14 +54,16 @@ public class NoteService {
 
     @Transactional
     public void addNewNote(Note note) {
-        Note savedNote = noteRepository.save(note);
         try {
+            Note savedNote = noteRepository.save(note);
 
             String openPassword = savedNote.getPassword();
             String alias = note.getServiceName() + ":" + savedNote.getId();
             String encrypt = aes.encrypt(openPassword, alias);
             note.setPassword(encrypt);
 
+        } catch (DataIntegrityViolationException ex) {
+            throw new DuplicateNoteException("Note with the same service name and login already exists", ex);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException |
                  InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidKeySpecException |
                  KeyStoreException e) {
