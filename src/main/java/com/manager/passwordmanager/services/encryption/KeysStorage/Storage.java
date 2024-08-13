@@ -85,7 +85,7 @@ public class Storage {
 
     public void deleteKey(KeyStore keyStore, String aliasID, char[] storePassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
         if(!keyStore.containsAlias(aliasID))
-            throw new KeyStoreException("There is no such ID in keyStore");
+            throw new KeyStoreException("There is no such alias in keyStore");
 
         keyStore.deleteEntry(aliasID);
 

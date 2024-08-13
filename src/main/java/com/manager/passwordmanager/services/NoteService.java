@@ -5,6 +5,7 @@ import com.manager.passwordmanager.exceptions.DuplicateNoteException;
 import com.manager.passwordmanager.exceptions.NotFoundException;
 import com.manager.passwordmanager.repositories.NoteRepository;
 import com.manager.passwordmanager.services.encryption.AES;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +42,7 @@ public class NoteService {
                 .orElseThrow(() -> new NotFoundException("Note with id = " + id + " not found"));
     }
 
-    public String decryptPassword(Note note) {
+    public String decryptPassword(@NotNull Note note) {
         try {
             String alias = note.getServiceName() + ":" + note.getId();
             String password = note.getPassword();
@@ -82,7 +83,7 @@ public class NoteService {
             aes.deleteAlias(alias);
 
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
 
     }
