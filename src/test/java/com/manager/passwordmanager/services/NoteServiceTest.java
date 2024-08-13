@@ -2,10 +2,10 @@ package com.manager.passwordmanager.services;
 
 import com.manager.passwordmanager.entity.Note;
 import com.manager.passwordmanager.exceptions.DuplicateNoteException;
+import com.manager.passwordmanager.exceptions.NotFoundException;
 import com.manager.passwordmanager.repositories.NoteRepository;
 import com.manager.passwordmanager.services.encryption.AES;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -13,14 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -149,7 +144,7 @@ class NoteServiceTest {
     }
 
     @Test
-    void shouldRollbackTransactionWhenHasAnyExceptions() throws Exception {
+    void shouldRollbackTransactionWhenAddNoteHasAnyExceptions() throws Exception {
 
         // given
         Note note = new Note(
@@ -175,17 +170,227 @@ class NoteServiceTest {
     }
 
     @Test
-    @Disabled
-    void getNoteById() {
+    void canDeleteNoteById() throws Exception {
+
+        // given
+        Note note = new Note(
+                1L,
+                "Google",
+                "google.com",
+                "google@gmail.com",
+                "testPassword"
+        );
+        Long id = note.getId();
+        String alias = note.getServiceName() + ":" + id;
+
+        // when
+        when(noteRepository.findById(id)).thenReturn(Optional.of(note));
+        underTest.deleteNoteById(id);
+
+        // then
+        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(noteRepository).findById(idCaptor.capture());
+        verify(noteRepository).deleteById(idCaptor.capture());
+
+        Long receivedId = idCaptor.getValue();
+        assertEquals(id, receivedId);
+
+        verify(aes).deleteAlias(alias);
     }
 
     @Test
-    @Disabled
-    void decryptPassword() {
+    void cannotDeleteNoteByIdWhenNoteDontExist() throws Exception {
+
+        // given
+        Long id = 1L;
+
+        // when
+        when(noteRepository.findById(id)).thenReturn(Optional.empty());
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> underTest.deleteNoteById(id));
+
+        // then
+        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(noteRepository).findById(idCaptor.capture());
+
+        verify(noteRepository, never()).deleteById(idCaptor.capture());
+        verify(aes, never()).deleteAlias(anyString());
+
+        Long receivedId = idCaptor.getValue();
+        assertEquals(id, receivedId);
+
+        assertEquals("Note with id = " + id + " not found", exception.getMessage());
     }
 
     @Test
-    @Disabled
-    void deleteNoteById() {
+    void cannotDeleteNoteByIdDueEncryptionException() throws Exception {
+
+        // given
+        Note note = new Note(
+                1L,
+                "Google",
+                "google.com",
+                "google@gmail.com",
+                "testPassword"
+        );
+        Long id = note.getId();
+        String alias = note.getServiceName() + ":" + id;
+
+
+        // when
+        doThrow(new KeyStoreException("There is no such alias in keyStore")).when(aes).deleteAlias(alias);
+
+        when(noteRepository.findById(id)).thenReturn(Optional.of(note));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> underTest.deleteNoteById(id));
+
+        // then
+        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
+
+        verify(noteRepository).findById(idCaptor.capture());
+        verify(noteRepository).deleteById(idCaptor.capture());
+
+        verify(aes).deleteAlias(alias);
+
+        Long receivedId = idCaptor.getValue();
+        assertEquals(id, receivedId);
+
+        assertInstanceOf(KeyStoreException.class, exception.getCause());
+        assertEquals("There is no such alias in keyStore", exception.getMessage());
+    }
+
+    @Test
+    void shouldRollbackTransactionWhenDeleteNoteHasAnyExceptions() throws Exception {
+
+        // given
+        Note note = new Note(
+                1L,
+                "Google",
+                "google.com",
+                "google@gmail.com",
+                "testPassword"
+        );
+        Long id = note.getId();
+        String alias = note.getServiceName() + ":" + id;
+
+        // when
+        doThrow(new KeyStoreException("There is no such ID in keyStore")).when(aes).deleteAlias(alias);
+
+        when(noteRepository.findById(id)).thenReturn(Optional.of(note));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> underTest.deleteNoteById(id));
+
+        // then
+        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
+
+        verify(noteRepository).findById(idCaptor.capture());
+        verify(noteRepository).deleteById(idCaptor.capture());
+
+        verify(aes).deleteAlias(alias);
+
+        Long receivedId = idCaptor.getValue();
+        assertEquals(id, receivedId);
+
+        assertInstanceOf(KeyStoreException.class, exception.getCause());
+        assertEquals("There is no such ID in keyStore", exception.getMessage());
+
+        verifyNoMoreInteractions(noteRepository);
+    }
+
+    @Test
+    void canGetNoteById() {
+
+        // given
+        Note note = new Note(
+                1L,
+                "Google",
+                "google.com",
+                "google@gmail.com",
+                "testPassword"
+        );
+
+        Long id = note.getId();
+
+        // when
+        when(noteRepository.findById(id)).thenReturn(Optional.of(note));
+        Note receivedNote = underTest.getNoteById(id);
+
+        // then
+        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(noteRepository).findById(idCaptor.capture());
+
+        Long capturedId = idCaptor.getValue();
+
+        assertEquals(id, capturedId);
+        assertSame(note, receivedNote);
+    }
+
+    @Test
+    void cannotGetNoteById() {
+
+        // given
+        Long id = 1L;
+
+        // when
+        when(noteRepository.findById(id)).thenReturn(Optional.empty());
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> underTest.getNoteById(id));
+
+        // then
+        verify(noteRepository).findById(id);
+
+        assertEquals("Note with id = " + id + " not found", exception.getMessage());
+    }
+
+    @Test
+    void shouldDecryptPassword() throws Exception {
+
+        // given
+        Note note = new Note(
+                1L,
+                "Google",
+                "google.com",
+                "google@gmail.com",
+                "encryptedPassword"
+        );
+        String alias = note.getServiceName() + ":" + note.getId();
+        String decryptedPassword = "decryptedPassword";
+
+        // when
+        when(aes.decrypt(note.getPassword(), alias)).thenReturn(decryptedPassword);
+        String underDecrypted = underTest.decryptPassword(note);
+
+        // then
+        String notePassword = note.getPassword();
+
+        verify(aes).decrypt(notePassword, alias);
+
+        assertEquals(decryptedPassword, underDecrypted);
+
+    }
+
+    @Test
+    void shouldNotDecryptPassword() throws Exception {
+
+        // given
+        Note note = new Note(
+                1L,
+                "Google",
+                "google.com",
+                "google@gmail.com",
+                "encryptedPassword"
+        );
+        String alias = note.getServiceName() + ":" + note.getId();
+
+        // when
+        doThrow(new KeyStoreException()).when(aes).decrypt(note.getPassword(), alias);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> underTest.decryptPassword(note));
+
+        // then
+        String notePassword = note.getPassword();
+
+        verify(aes).decrypt(notePassword, alias);
+
+        assertInstanceOf(KeyStoreException.class, exception.getCause());
+        assertEquals("Error decrypting password", exception.getMessage());
     }
 }
