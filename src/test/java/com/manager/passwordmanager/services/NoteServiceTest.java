@@ -315,12 +315,8 @@ class NoteServiceTest {
         Note receivedNote = underTest.getNoteById(id);
 
         // then
-        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
-        verify(noteRepository).findById(idCaptor.capture());
+        verify(noteRepository).findById(id);
 
-        Long capturedId = idCaptor.getValue();
-
-        assertEquals(id, capturedId);
         assertSame(note, receivedNote);
     }
 
@@ -368,7 +364,7 @@ class NoteServiceTest {
     }
 
     @Test
-    void shouldNotDecryptPassword() throws Exception {
+    void shouldExceptionWhenDecryptPassword() throws Exception {
 
         // given
         Note note = new Note(

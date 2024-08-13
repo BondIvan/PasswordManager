@@ -33,7 +33,7 @@ public class MPService {
         } catch (NoSuchPaddingException | IllegalBlockSizeException | IOException | NoSuchAlgorithmException |
                  InvalidAlgorithmParameterException | InvalidKeyException | InvalidKeySpecException |
                  BadPaddingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Master password verification failed ", e);
         }
 
     }
@@ -45,7 +45,7 @@ public class MPService {
         } catch (IOException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
                  InvalidKeySpecException | BadPaddingException | InvalidKeyException |
                  InvalidAlgorithmParameterException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error creating master password" , e);
         }
 
     }
