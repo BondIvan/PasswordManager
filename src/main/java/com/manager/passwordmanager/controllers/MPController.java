@@ -20,7 +20,7 @@ public class MPController {
     }
 
     @GetMapping("/create")
-    public String createMasterPassword() {
+    public String showPageForCreateMasterPassword() {
 
         return "create_master_password";
     }
