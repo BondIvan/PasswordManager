@@ -1,7 +1,6 @@
 package com.manager.passwordmanager.controllers;
 
 import com.manager.passwordmanager.entity.Note;
-import com.manager.passwordmanager.exceptions.DuplicateNoteException;
 import com.manager.passwordmanager.services.NoteService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -14,11 +13,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/notes")
-public class MainController {
+public class NoteController {
 
     private final NoteService noteService;
 
-    public MainController(NoteService noteService) {
+    public NoteController(NoteService noteService) {
         this.noteService = noteService;
     }
 
@@ -35,15 +34,6 @@ public class MainController {
         }
 
         return "index";
-    }
-
-    @ExceptionHandler(DuplicateNoteException.class)
-    public String handleDuplicateNote(DuplicateNoteException duplicateNoteException, RedirectAttributes redirectAttributes) {
-
-        redirectAttributes.addFlashAttribute("duplicateException", duplicateNoteException.getMessage());
-        redirectAttributes.addFlashAttribute("newNote", new Note());
-
-        return "redirect:/notes";
     }
 
     @PostMapping("/add")
